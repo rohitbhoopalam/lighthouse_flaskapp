@@ -2,13 +2,16 @@ from flask import Flask
 from flaskext.mysql import MySQL
 import json
 from flask import jsonify
-from flask import request 
+from flask import request
 from flask import Response
 from crossdomain import crossdomain
- 
+from flask.ext.cors import CORS  # The typical way to import flask-cors
+
 mysql = MySQL()
 
 app = Flask(__name__)
+cors = CORS(app, resources={r"*": {"origins": "*"}})
+
 
 app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = ''
@@ -20,7 +23,6 @@ mysql.init_app(app)
 import models as m
 
 @app.route('/questions')
-@crossdomain(origin='*')
 def get_questions():
     q_ref_id = request.args.get("q_ref_id", None)
     return Response(json.dumps(m.get_top_questions(q_ref_id=q_ref_id)),  mimetype='application/json')
